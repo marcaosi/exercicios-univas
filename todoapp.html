@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO app</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container-xs p-3">
+        <div class="row my-3 d-flex align-items-center justify-content-center">
+            <div class="col">
+                <h1>Lista de tarefas</h1>
+                <p><a onclick="mostrarTutorial()">Mostrar tutorial</a></p>
+                <form action="" onsubmit="save(event, this)">
+                    <div class="row">
+                        <div class="col">
+                            <label for="tarefa" class="form-label d-none" id="label-tarefa">Nome da tarefa</label>
+                            <input type="text" name="tarefa" id="tarefa" onkeyup="esconderLabel(this)" required class="form-control" maxlength="50" placeholder="Nome da tarefa">
+                        </div>
+                    </div>
+                    <div class="row mt-1 text-center">
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <ul class="list-group" id="tarefas">
+                    <li class="list-group-item" ondblclick="excluir(event)" onclick="marcar(event)" data-checked="false">Tarefa 01</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Passo 1</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Clique na tarefa para marcar como concluída ou desmarcar como concluída
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Próximo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Passo 2</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Dê dois cliques na tarefa para excluir.
+            </div>
+            <div class="modal-footer">
+                <input type="checkbox" name="naoMostrarTutorial" id="naoMostrarTutorial"> <label for="naoMostrarTutorial">Não mostrar tutorial novamente</label>
+                <button class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+
+
+
+    <script>
+        window.onload = () => {
+            let tutorial = deveMostrarTutorial()
+            console.log(tutorial)
+            if(tutorial === undefined){
+                localStorage.setItem("tutorial", true)
+                tutorial = true
+            }
+
+            const modalEl = document.getElementById("exampleModalToggle2")
+            modalEl.addEventListener("hide.bs.modal", event => {
+                const naoMostrarTutorial = document.getElementById("naoMostrarTutorial")
+                if(naoMostrarTutorial.checked){
+                    localStorage.setItem("tutorial", false)
+                }else{
+                    localStorage.setItem("tutorial", true)
+                }
+            })
+
+            if(tutorial !== 'false'){
+                const modal = new bootstrap.Modal(document.getElementById("exampleModalToggle"))
+                modal.show()
+            }
+        }
+
+        function excluir(event){
+            event.target.remove()
+        }
+
+        function marcar(event){
+            const checked = event.target.dataset.checked
+            if(checked == "false"){
+                event.target.classList.add("bg-success")
+                event.target.classList.add("text-white")
+                event.target.dataset.checked = "true"
+            }else{
+                event.target.classList.remove("bg-success")
+                event.target.classList.remove("text-white")
+                event.target.dataset.checked = "false"
+            }
+        }
+
+        function save(event, form){
+            event.preventDefault()
+
+            const li = document.createElement("li")
+            li.innerText = form.tarefa.value
+            li.classList.add("list-group-item")
+            li.ondblclick = excluir
+            li.dataset.checked = false
+            li.onclick = marcar
+
+            const container = document.getElementById("tarefas")
+            container.appendChild(li)
+
+            form.reset()
+            document.getElementById("label-tarefa").classList.add("d-none")
+        }
+
+        function esconderLabel(input){
+            if(input.value.length > 0){
+                document.getElementById("label-tarefa").classList.remove("d-none")
+            }else{
+                document.getElementById("label-tarefa").classList.add("d-none")
+            }
+        }
+
+        function deveMostrarTutorial(){
+            return localStorage.getItem("tutorial")
+        }
+
+        function mostrarTutorial(){
+            const modal = new bootstrap.Modal(document.getElementById("exampleModalToggle"))
+                modal.show()
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+</html>

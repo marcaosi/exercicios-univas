@@ -78,14 +78,18 @@
 
 
     <script>
+        // Executa as funções que carregam o tutorial ao iniciar a aplicaçao
         window.onload = () => {
+            // Verifica se deve mostrar o tutorial
             let tutorial = deveMostrarTutorial()
-            console.log(tutorial)
+            
+            // Verifica se é a primeira vez acessando a aplicação
             if(tutorial === undefined){
                 localStorage.setItem("tutorial", true)
                 tutorial = true
             }
 
+            // Adiciona um evento ao modal do Bootstrap para verificar se marcou para não aparecer o tutorial mais
             const modalEl = document.getElementById("exampleModalToggle2")
             modalEl.addEventListener("hide.bs.modal", event => {
                 const naoMostrarTutorial = document.getElementById("naoMostrarTutorial")
@@ -96,16 +100,19 @@
                 }
             })
 
+            // Se deve mostrar o tutorial então abre o Modal.
             if(tutorial !== 'false'){
                 const modal = new bootstrap.Modal(document.getElementById("exampleModalToggle"))
                 modal.show()
             }
         }
 
+        // Funçao que remove um elemento da tela
         function excluir(event){
             event.target.remove()
         }
 
+        // Funçao que marca se um elemento foi concluído ou desmarca ele dependendo do estado.
         function marcar(event){
             const checked = event.target.dataset.checked
             if(checked == "false"){
@@ -119,9 +126,12 @@
             }
         }
 
+        // Função que salve uma nova tarefa na lista
         function save(event, form){
+            // Previne a execução do formulário para manter na mesma tela
             event.preventDefault()
 
+            // Cria um elemento da lista e adiciona as classes e funções pertinentes
             const li = document.createElement("li")
             li.innerText = form.tarefa.value
             li.classList.add("list-group-item")
@@ -129,9 +139,11 @@
             li.dataset.checked = false
             li.onclick = marcar
 
+            // busca o container de tarefas e adiciona a tarefa criada nele
             const container = document.getElementById("tarefas")
             container.appendChild(li)
 
+            // Limpa o formulário e esconde o label da tela
             form.reset()
             document.getElementById("label-tarefa").classList.add("d-none")
         }
